@@ -1,0 +1,18 @@
+server:
+  port: 8082
+
+token:
+  expiration_time: 90000
+  secret: hjkahkchjsdhcksdcusuchde
+
+spring:
+  application:
+    name: registration-service
+  datasource:
+    username: postgres
+    password: Root@010
+    url: jdbc:postgresql://localhost:5432/RegistrationDB
+  jpa:
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: update
