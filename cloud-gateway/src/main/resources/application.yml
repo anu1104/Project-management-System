@@ -1,0 +1,22 @@
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8095/eureka
+
+server:
+  port: 9000
+
+spring:
+  application:
+    name: cloud-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+
+
+

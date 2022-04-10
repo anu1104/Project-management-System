@@ -1,5 +1,6 @@
 package com.projectmanagementsystem.registrationservice.security;
 
+import com.projectmanagementsystem.registrationservice.client.ProjectServiceClient;
 import com.projectmanagementsystem.registrationservice.model.CollaborationRole;
 import com.projectmanagementsystem.registrationservice.model.UserRole;
 import com.projectmanagementsystem.registrationservice.service.RegistrationService;
@@ -18,12 +19,15 @@ public class RegistrationSecurityConfig extends WebSecurityConfigurerAdapter {
     private final RegistrationService registrationService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final Environment environment;
+    private final ProjectServiceClient projectServiceClient;
 
     @Autowired
-    public RegistrationSecurityConfig(RegistrationService registrationService, BCryptPasswordEncoder bCryptPasswordEncoder, Environment environment) {
+    public RegistrationSecurityConfig(RegistrationService registrationService, BCryptPasswordEncoder bCryptPasswordEncoder,
+                                      Environment environment, ProjectServiceClient projectServiceClient) {
         this.registrationService = registrationService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.environment = environment;
+        this.projectServiceClient = projectServiceClient;
     }
 
     @Override
@@ -35,7 +39,7 @@ public class RegistrationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .hasAnyAuthority(CollaborationRole.PROJECT_MANAGER.name());
         httpSecurity.authorizeRequests().regexMatchers("/", ".*user/.*").permitAll();
         httpSecurity.addFilter(getAuthenticationFilter());
-        httpSecurity.addFilterBefore(new AuthorizationFilter(environment, registrationService),
+        httpSecurity.addFilterBefore(new AuthorizationFilter(environment, registrationService, projectServiceClient),
                 RegistrationAuthFilter.class);
     }
 
