@@ -31,4 +31,6 @@ public interface ProjectService {
 	public ApiResponse createProject(String userId, ProjectModel projectModel);
 
 	public String addUsersToProject(int projectId, List<Integer> listOfUsers);
+
+	public List<String> getAllProjectIds();
 }

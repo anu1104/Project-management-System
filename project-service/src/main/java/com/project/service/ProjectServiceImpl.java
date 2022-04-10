@@ -1,31 +1,26 @@
 package com.project.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import org.assertj.core.util.Arrays;
+import com.project.dao.ProjectRepository;
+import com.project.dao.SubTaskRepository;
+import com.project.dao.UserStoryRepository;
+import com.project.dto.ProjectDTO;
+import com.project.dto.Status;
+import com.project.dto.SubTaskDTO;
+import com.project.dto.UserStoryDTO;
+import com.project.model.*;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.modelmapper.convention.MatchingStrategies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import com.project.controller.ProjectController;
-import com.project.dao.ProjectRepository;
-import com.project.dao.UserStoryRepository;
-import com.project.dao.SubTaskRepository;
-import com.project.dto.ProjectDTO;
-import com.project.dto.Status;
-import com.project.dto.SubTaskDTO;
-import com.project.dto.UserStoryDTO;
-import com.project.model.ApiResponse;
-import com.project.model.ProjectDetailsModel;
-import com.project.model.ProjectModel;
-import com.project.model.SubTaskModel;
-import com.project.model.UserStoryModel;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Service
 public class ProjectServiceImpl implements ProjectService {
 	
@@ -219,15 +214,15 @@ public class ProjectServiceImpl implements ProjectService {
 
 	@Override
 	public ApiResponse createProject(String userId,ProjectModel projectModel) {
-		projectModel.setOwner(userId);
+		projectModel.setManagerId(userId);
 		
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 		ProjectDTO projectDTO = modelMapper.map(projectModel,ProjectDTO.class);
 
 		ProjectDTO projectDTO1 = projectRepository.save(projectDTO);
 		
-		response.setId(projectDTO1.getId());
-		response.setStatus("created");
+		response.setId(projectDTO1.getProjectId());
+		response.setStatus(HttpStatus.CREATED.name());
 		return response;
 	}
 
@@ -236,6 +231,17 @@ public class ProjectServiceImpl implements ProjectService {
 	//rest call to reg service to update project id in users table
 		
 		return "Users are added to project";
+	}
+
+	@Override
+	public List<String> getAllProjectIds() {
+		List<ProjectDTO> projectDTOList = projectRepository.findAll();
+		List<String> projectIdList = new ArrayList<>();
+		if(! projectDTOList.isEmpty()){
+			projectIdList = projectDTOList.stream().map(projectDTO -> Integer.toString(projectDTO.getProjectId()))
+					.collect(Collectors.toList());
+		}
+		return projectIdList;
 	}
 
 }
