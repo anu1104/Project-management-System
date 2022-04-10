@@ -1,5 +1,6 @@
 package com.projectmanagementsystem.registrationservice.security;
 
+import com.projectmanagementsystem.registrationservice.client.ProjectServiceClient;
 import com.projectmanagementsystem.registrationservice.dto.UserDetailsDTO;
 import com.projectmanagementsystem.registrationservice.exception.InvalidProjectAccessException;
 import com.projectmanagementsystem.registrationservice.exception.JWTException;
@@ -31,10 +32,13 @@ import java.util.stream.Collectors;
 public class AuthorizationFilter extends OncePerRequestFilter {
     private final Environment environment;
     private final RegistrationService registrationService;
+    private final ProjectServiceClient projectServiceClient;
 
-    public AuthorizationFilter(Environment environment, RegistrationService registrationService){
+    public AuthorizationFilter(Environment environment, RegistrationService registrationService,
+                               ProjectServiceClient projectServiceClient){
         this.environment = environment;
         this.registrationService = registrationService;
+        this.projectServiceClient = projectServiceClient;
     }
 
     @Override
@@ -74,8 +78,11 @@ public class AuthorizationFilter extends OncePerRequestFilter {
                             .map(projectRoleModel -> projectRoleModel.getCollaborationRole())
                             .collect(Collectors.toList());
 
-                    // project service call needed here
-                    if(userDetailsDTO.getUserRole().equals(UserRole.MANAGER) && projectIdsProcessed.isEmpty())
+                    // project service call to get project ids
+                    List<String> allProjectIds = projectServiceClient.getAllProjectIds();
+
+                    if(userDetailsDTO.getUserRole().equals(UserRole.MANAGER) && (allProjectIds.isEmpty() ||
+                            ! allProjectIds.containsAll(projectIdList)))
                         rolesFinal.add(new SimpleGrantedAuthority(CollaborationRole.PROJECT_MANAGER.name()));
                     else{
                         if(projectIdList.size() == 1) {
@@ -88,7 +95,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
                             if(projectIdsProcessed.containsAll(projectIdList) && new HashSet<>(filtered).size() == 1)
                                 rolesFinal.add(new SimpleGrantedAuthority(filtered.get(0).name()));
                             else
-                                throw new InvalidProjectAccessException("Project Ids given are invalid");
+                                throw new InvalidProjectAccessException("User has varying access privileges across given projects");
                         }
                     }
 
