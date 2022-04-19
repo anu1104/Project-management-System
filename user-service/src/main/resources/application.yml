@@ -1,0 +1,23 @@
+server:
+  port: 8084
+
+token:
+  expiration_time: 900000
+  secret: hjkahkchjsdhcksdcusuchde
+
+spring:
+  application:
+    name: user-service
+  datasource:
+    username: postgres
+    password: Root@010
+    url: jdbc:postgresql://localhost:5432/NotificationDB
+  jpa:
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: update
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8095/eureka
