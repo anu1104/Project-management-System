@@ -28,5 +28,11 @@ public interface ProjectService {
 
 	public String addUsersToProject(int projectId, List<Integer> listOfUsers);
 
+
 	public List<ProjectDataModel> getProjectsManaged(String managerId);
+
+	public ApiResponse addSprint(SprintModel sprint);
+
+	public ApiResponse updateSprint(SprintModel sprint, int id);
+
 }
