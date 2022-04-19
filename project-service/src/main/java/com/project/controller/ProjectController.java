@@ -5,6 +5,7 @@ package com.project.controller;
 import java.util.List;
 import java.util.Optional;
 
+import com.project.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +22,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.dto.User;
-import com.project.model.ApiResponse;
-import com.project.model.ProjectDetailsModel;
-import com.project.model.ProjectModel;
-import com.project.model.SubTaskModel;
-import com.project.model.UserStoryModel;
 import com.project.service.ProjectService;
 
 @RestController
@@ -148,4 +144,24 @@ public class ProjectController {
 
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
+
+	@PostMapping("/add/sprint")
+	public ResponseEntity<ApiResponse> addSprint(@RequestBody SprintModel sprint){
+
+		ApiResponse response = service.addSprint(sprint);
+
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+	}
+
+	@PutMapping("/add/sprint/{id}")
+	public ResponseEntity<ApiResponse> addSprint(@RequestBody SprintModel sprint,@PathVariable("id")
+			int id){
+
+		ApiResponse response = service.updateSprint(sprint,id);
+
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+	}
+
 }
