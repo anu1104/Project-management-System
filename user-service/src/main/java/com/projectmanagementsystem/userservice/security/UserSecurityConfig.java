@@ -39,7 +39,7 @@ public class UserSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.authorizeRequests().regexMatchers(".*/manager/create-project.*", ".*/project/managed/.*")
                 .hasAnyAuthority(UserRole.MANAGER.name());
         httpSecurity.authorizeRequests().regexMatchers(".*/create/user-stories.*",
-                ".*/add/sprint/.*")
+                ".*/add/sprint.*")
                 .hasAnyAuthority(CollaborationRole.PROJECT_MANAGER.name(), CollaborationRole.SCRUM_MASTER.name());
         httpSecurity.authorizeRequests().regexMatchers(".*/subtask.*", ".*/update/user-story/.*", ".*/publish/.*")
                 .hasAnyAuthority(CollaborationRole.PROJECT_MANAGER.name(), CollaborationRole.SCRUM_MASTER.name(),

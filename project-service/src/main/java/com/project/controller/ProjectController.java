@@ -131,4 +131,27 @@ public class ProjectController {
 
 		return ResponseEntity.status(HttpStatus.OK).body(service.getProjectsManaged(managerId));
 	}
+
+	@PostMapping("/add/sprint")
+	public ResponseEntity<ApiResponse> addSprint(@RequestBody SprintModel sprint,
+												 @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+												 @RequestHeader("projectIds") String projectIds){
+
+		ApiResponse response = service.addSprint(sprint);
+
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+	}
+
+	@PutMapping("/add/sprint/{id}")
+	public ResponseEntity<ApiResponse> updateSprint(@RequestBody SprintModel sprint,@PathVariable("id")
+			int id, @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+												 @RequestHeader("projectIds") String projectIds){
+
+		ApiResponse response = service.updateSprint(sprint,id);
+
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+	}
+
 }

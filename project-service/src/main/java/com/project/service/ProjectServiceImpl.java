@@ -1,12 +1,10 @@
 package com.project.service;
 
 import com.project.dao.ProjectRepository;
+import com.project.dao.SprintRepository;
 import com.project.dao.SubTaskRepository;
 import com.project.dao.UserStoryRepository;
-import com.project.dto.ProjectDTO;
-import com.project.dto.Status;
-import com.project.dto.SubTaskDTO;
-import com.project.dto.UserStoryDTO;
+import com.project.dto.*;
 import com.project.exception.InvalidProjectAccessException;
 import com.project.model.*;
 import org.modelmapper.ModelMapper;
@@ -33,16 +31,18 @@ public class ProjectServiceImpl implements ProjectService {
 	private final ProjectRepository projectRepository;
 	private final ModelMapper modelMapper;
 	private final ApiResponse response;
+	private final SprintRepository sprintRepository;
 	
 	public ProjectServiceImpl(UserStoryRepository userRepository,
-			ModelMapper modelmapper,ApiResponse respose,SubTaskRepository subTaskRepository,
-			ProjectRepository projectRepository) {
+							  ModelMapper modelmapper, ApiResponse respose, SubTaskRepository subTaskRepository,
+							  ProjectRepository projectRepository, SprintRepository sprintRepository) {
 		super();
 		this.userStoryRepository = userRepository;
 		this.modelMapper = modelmapper;
 		this.response=respose;
 		this.subTaskRepository=subTaskRepository;
 		this.projectRepository=projectRepository;
+		this.sprintRepository = sprintRepository;
 	}
 	
 	@Override
@@ -217,5 +217,51 @@ public class ProjectServiceImpl implements ProjectService {
 		List<ProjectDTO> projectDTO = projectRepository.findByManagerId(managerId);
 		return projectDTO.stream().map(project -> modelMapper.map(project, ProjectDataModel.class)).collect(Collectors.toList());
 	}
+	@Override
+	public ApiResponse addSprint(SprintModel sprint){
+		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+		SprintDTO sprintDTO = modelMapper.map(sprint,SprintDTO.class);
+
+		SprintDTO dto = sprintRepository.save(sprintDTO);
+
+		response.setId(dto.getId());
+		response.setStatus(HttpStatus.CREATED.name());
+		log.info("Sprint created with id : {} " , dto.getId());
+		return  response;
+
+
+	}
+
+	public ApiResponse updateSprint(SprintModel sprint, int id){
+		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+		SprintDTO sprintDTO = modelMapper.map(sprint,SprintDTO.class);
+
+		Optional<SprintDTO> dto = sprintRepository.findById(id);
+
+		if(dto.isPresent()){
+			if(0 != sprintDTO.getProjectId())
+				dto.get().setProjectId(sprintDTO.getProjectId());
+
+			if(null != sprintDTO.getDuration())
+				dto.get().setDuration(sprintDTO.getDuration());
+
+			if(null != sprintDTO.getStartDate())
+				dto.get().setStartDate(sprintDTO.getStartDate());
+
+			if(null!= sprintDTO.getEndDate())
+				dto.get().setEndDate(sprintDTO.getEndDate());
+
+			dto.get().setSprintActive(sprintDTO.isSprintActive());
+
+			SprintDTO sprintDTO1 = sprintRepository.save(dto.get());
+
+			response.setId(sprintDTO1.getId());
+			response.setStatus("created");
+
+		}
+
+		return response;
+	}
+
 
 }

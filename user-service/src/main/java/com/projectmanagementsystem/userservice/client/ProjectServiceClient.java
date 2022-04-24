@@ -3,8 +3,6 @@ package com.projectmanagementsystem.userservice.client;
 import com.projectmanagementsystem.userservice.model.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,4 +44,14 @@ public interface ProjectServiceClient {
     @GetMapping("/api/v1.0/project-tracker/allDetails")
     public List<ProjectDetailsModel> getAllDetails(@RequestParam("userId") int userId,
                                                                    @RequestHeader(HttpHeaders.AUTHORIZATION) String token);
+
+    @PostMapping("/api/v1.0/project-tracker/add/sprint")
+    public ApiResponse addSprint(@RequestBody SprintModel sprint,
+                                                 @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                                 @RequestHeader("projectIds") String projectIds);
+
+    @PutMapping("/api/v1.0/project-tracker/add/sprint/{id}")
+    public ApiResponse updateSprint(@RequestBody SprintModel sprint,@PathVariable("id")
+            int id, @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                                 @RequestHeader("projectIds") String projectIds);
 }

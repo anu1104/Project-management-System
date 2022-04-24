@@ -25,4 +25,8 @@ public interface UserService {
 
     public List<ProjectDataModel> getProjectsManaged(String managerId, String token);
 
+    public ApiResponse updateSprint(SprintModel sprintModel, int id, String token, String projectIds);
+
+    public ApiResponse addSprint(SprintModel sprintModel, String token, String projectIds);
+
 }

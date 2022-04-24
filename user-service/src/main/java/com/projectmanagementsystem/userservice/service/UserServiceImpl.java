@@ -110,4 +110,14 @@ public class UserServiceImpl implements UserService{
     public List<ProjectDataModel> getProjectsManaged(String managerId, String token) {
         return projectServiceClient.getProjectsManaged(managerId, token);
     }
+
+    @Override
+    public ApiResponse updateSprint(SprintModel sprintModel, int id, String token, String projectIds) {
+        return projectServiceClient.updateSprint(sprintModel, id, token, projectIds);
+    }
+
+    @Override
+    public ApiResponse addSprint(SprintModel sprintModel, String token, String projectIds) {
+        return projectServiceClient.addSprint(sprintModel, token, projectIds);
+    }
 }
