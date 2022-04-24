@@ -31,11 +31,20 @@ public class UserSecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity.csrf().disable();
         httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         httpSecurity.headers().frameOptions().disable();
-        httpSecurity.authorizeRequests().regexMatchers(".*/manager/create-project.*")
-                .hasAnyAuthority(UserRole.MANAGER.name());
         httpSecurity.authorizeRequests().regexMatchers(".*/manager/manage-user.*")
                 .hasAnyAuthority(CollaborationRole.PROJECT_MANAGER.name());
         httpSecurity.authorizeRequests().regexMatchers(".*/notify.*")
+                .hasAnyAuthority(UserRole.MANAGER.name(), UserRole.USER.name());
+        httpSecurity.headers().frameOptions().disable();
+        httpSecurity.authorizeRequests().regexMatchers(".*/manager/create-project.*", ".*/project/managed/.*")
+                .hasAnyAuthority(UserRole.MANAGER.name());
+        httpSecurity.authorizeRequests().regexMatchers(".*/create/user-stories.*",
+                ".*/add/sprint/.*")
+                .hasAnyAuthority(CollaborationRole.PROJECT_MANAGER.name(), CollaborationRole.SCRUM_MASTER.name());
+        httpSecurity.authorizeRequests().regexMatchers(".*/subtask.*", ".*/update/user-story/.*", ".*/publish/.*")
+                .hasAnyAuthority(CollaborationRole.PROJECT_MANAGER.name(), CollaborationRole.SCRUM_MASTER.name(),
+                        CollaborationRole.MEMBER.name());
+        httpSecurity.authorizeRequests().regexMatchers(".*/allDetails.*")
                 .hasAnyAuthority(UserRole.MANAGER.name(), UserRole.USER.name());
         httpSecurity.addFilterBefore(new AuthorizationFilter(environment, registrationServiceClient, projectServiceClient),
                 UsernamePasswordAuthenticationFilter.class);
