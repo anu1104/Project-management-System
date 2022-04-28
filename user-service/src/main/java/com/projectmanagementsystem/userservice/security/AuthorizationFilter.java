@@ -67,7 +67,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
                 if(! userName.equals(userDetailsDTO.getEmailId()))
                     throw new UserNotFoundException("Authentication failed: Invalid user");
 
-                if(! request.getServletPath().contains("get-all-users") && ! request.getServletPath().contains("allDetails") &&
+                if(! request.getServletPath().contains("get-all-users") && ! request.getServletPath().contains("managed") && ! request.getServletPath().contains("allDetails") &&
                         ! request.getServletPath().contains("create-project") && ! request.getServletPath().contains("notify")){
                     String projectIds = request.getHeader("projectIds");
                     if(projectIds == null || projectIds.isBlank()) {
